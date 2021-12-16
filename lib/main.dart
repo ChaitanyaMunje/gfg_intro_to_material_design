@@ -11,6 +11,7 @@ import 'information_displays.dart';
 import 'input_and_selections.dart';
 import 'layouts.dart';
 import 'magic_ball.dart';
+import 'maps/google_maps_main_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Intro To Material Design',
       debugShowCheckedModeBanner: false,
-      home: AlertDialogPage(),
+      home: StopWatchPage(),
     );
   }
 }

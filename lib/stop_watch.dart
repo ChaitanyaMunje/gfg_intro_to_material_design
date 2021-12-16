@@ -103,10 +103,6 @@ class _StopWatchPageState extends State<StopWatchPage> {
                 ),
               ],
             ),
-            SizedBox(height: 30,),
-            ElevatedButton(style:ElevatedButton.styleFrom(primary: Colors.green),onPressed: (){
-              //Navigator.push(context, MaterialPageRoute(builder: builder))
-            }, child: Text("Countdown Timer"))
           ],
         ),
       ),
