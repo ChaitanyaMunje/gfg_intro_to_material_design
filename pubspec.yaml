@@ -37,7 +37,15 @@ dependencies:
   dio: ^4.0.0
   flutter_polyline_points: ^0.2.6
   google_maps_flutter: ^2.0.2
+  flutter_colorpicker:
   fluttertoast: ^8.0.8
+  flutter_mobile_vision: ^0.1.4+1
+  translator: ^0.1.7
+  provider: ^4.3.2+2
+  firebase_auth: ^1.0.1 # add this line
+  firebase_core: ^1.0.2 # add this line
+  painter: ^2.0.0
+  flutter_language_identification: ^0.1.0
 
 dev_dependencies:
   flutter_test:
