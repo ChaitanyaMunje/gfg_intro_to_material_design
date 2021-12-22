@@ -1,174 +1,123 @@
 import 'package:flutter/material.dart';
-import 'package:intro_to_material_design/firebase_authentication/login_page.dart';
+import 'package:provider/provider.dart';
 
 import 'authentication.dart';
-import 'home_page.dart';
 
-class SignUpPage extends StatefulWidget {
-  const SignUpPage({Key? key}) : super(key: key);
-
+class SignUp extends StatefulWidget {
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  _SignUpState createState() => _SignUpState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
+class _SignUpState extends State<SignUp> {
+  TextEditingController emailTextController = TextEditingController();
+  TextEditingController passwordTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff10223d),
       appBar: AppBar(
-        backgroundColor: Color(0xff10223d),
-        title: Text(
-          "SignUp",
-          style: TextStyle(color: Colors.white),
+        automaticallyImplyLeading: false,
+        backgroundColor: Colors.indigoAccent,
+        title: const Text(
+          'Sign up',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
         ),
-        centerTitle: true,
-        elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-              child: TextFormField(
-                cursorColor: Colors.white,
-                //textInputAction: TextInputType.emailAddress,
-                autofocus: false,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Please enter your email..',
-                  labelStyle: TextStyle(fontSize: 15.0, color: Colors.white),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                    color: Colors.white,
-                    width: 1.0,
-                  )),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1.0)),
-                  errorStyle: TextStyle(color: Colors.redAccent, fontSize: 15),
+      body: SafeArea(
+        child: Center(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: 'Email'),
+                            controller: emailTextController),
+                      ),
+                    ],
+                  ),
                 ),
-                controller: emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-              child: TextFormField(
-                cursorColor: Colors.white,
-                //textInputAction: TextInputType.emailAddress,
-                autofocus: false,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Please enter your password..',
-                  labelStyle: TextStyle(fontSize: 15.0, color: Colors.white),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                    color: Colors.white,
-                    width: 1.0,
-                  )),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1.0)),
-                  errorStyle: TextStyle(color: Colors.redAccent, fontSize: 15),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                            enableSuggestions: false,
+                            autocorrect: false,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: 'Password'),
+                            controller: passwordTextController),
+                      ),
+                    ],
+                  ),
                 ),
-                controller: passwordController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-              child: TextFormField(
-                cursorColor: Colors.white,
-                //textInputAction: TextInputType.emailAddress,
-                autofocus: false,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Please confirm your password..',
-                  labelStyle: TextStyle(fontSize: 15.0, color: Colors.white),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                    color: Colors.white,
-                    width: 1.0,
-                  )),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1.0)),
-                  errorStyle: TextStyle(color: Colors.redAccent, fontSize: 15),
+                const SizedBox(
+                  height: 16,
                 ),
-                controller: confirmPasswordController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please confirm your password';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Container(
-              width: 320,
-              child: ElevatedButton(
-                onPressed: () {
-                  var email = emailController.text.toString();
-                  var pwd = passwordController.text.toString();
-                  var cnfPwd = confirmPasswordController.text.toString();
-                  if (pwd == cnfPwd) {
-                    AuthenticationHelper()
-                        .signUp(email: email, password: pwd)
-                        .then((result) {
-                      if (result == null) {
-                        Navigator.pushReplacement(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => HomePage()));
-                      } else {
-                        Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                            result,
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ));
+                Container(
+                  height: 40,
+                  width: 300,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 6.0,
+                      primary: Colors.indigoAccent, // background
+                      onPrimary: Colors.white, // foreground
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          side: const BorderSide(color: Colors.indigoAccent)),
+                    ),
+                    onPressed: () async {
+                      final result =
+                          await context.read<AuthenticationService>().signUp(
+                                email: emailTextController.text.trim(),
+                                password: passwordTextController.text.trim(),
+                              );
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(result.toString()),
+                        duration: const Duration(milliseconds: 1200),
+                      ));
+
+                      if (result == "Signed up") {
+                        Navigator.popUntil(
+                            context, ModalRoute.withName('/auth'));
                       }
-                    });
-                  }
-                },
-                child: Text("SignUp"),
-                style: ElevatedButton.styleFrom(
-                  primary: const Color(0xff2b3c5a),
+                    },
+                    child: Text('Create Account'),
+                  ),
                 ),
-              ),
+                const SizedBox(
+                  height: 24,
+                ),
+                InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Already have an account? "),
+                      Text(
+                        'Sign in.',
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                )
+              ],
             ),
-            TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => LoginPage()));
-                },
-                child: Text(
-                  "Already a User? Login here",
-                  style: TextStyle(color: Colors.white),
-                ))
-          ],
+          ),
         ),
       ),
     );

@@ -1,138 +1,127 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:intro_to_material_design/firebase_authentication/home_page.dart';
-import 'package:intro_to_material_design/firebase_authentication/signup_page.dart';
+import 'package:provider/provider.dart';
 
 import 'authentication.dart';
 
-class LoginPage extends StatefulWidget {
-  const LoginPage({Key? key}) : super(key: key);
-
+class SignIn extends StatefulWidget {
   @override
-  _LoginPageState createState() => _LoginPageState();
+  _SignInState createState() => _SignInState();
 }
 
-class _LoginPageState extends State<LoginPage> {
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
+class _SignInState extends State<SignIn> {
+  TextEditingController emailTextController = TextEditingController();
+  TextEditingController passwordTextController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff10223d),
       appBar: AppBar(
-        backgroundColor: Color(0xff10223d),
-        title: Text(
-          "Login",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
+        automaticallyImplyLeading: false,
         elevation: 0,
+        backgroundColor: Colors.indigoAccent,
+        title: const Text(
+          'Sign in',
+          style: TextStyle(
+              fontSize: 20, fontWeight: FontWeight.w500, color: Colors.white),
+        ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-              child: TextFormField(
-                cursorColor: Colors.white,
-                //textInputAction: TextInputType.emailAddress,
-                autofocus: false,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Please enter your email..',
-                  labelStyle: TextStyle(fontSize: 15.0, color: Colors.white),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 1.0,
-                      )),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1.0)),
-                  errorStyle: TextStyle(color: Colors.redAccent, fontSize: 15),
+      body: SafeArea(
+        child: Center(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: 'Email'),
+                            controller: emailTextController),
+                      ),
+                    ],
+                  ),
                 ),
-                controller: emailController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Padding(
-              padding: EdgeInsets.fromLTRB(20.0, 0, 20.0, 0),
-              child: TextFormField(
-                cursorColor: Colors.white,
-                //textInputAction: TextInputType.emailAddress,
-                autofocus: false,
-                style: const TextStyle(color: Colors.white),
-                decoration: const InputDecoration(
-                  labelText: 'Please enter your password..',
-                  labelStyle: TextStyle(fontSize: 15.0, color: Colors.white),
-                  border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white,
-                        width: 1.0,
-                      )),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white, width: 1.0)),
-                  errorStyle: TextStyle(color: Colors.redAccent, fontSize: 15),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                            enableSuggestions: false,
+                            autocorrect: false,
+                            obscureText: true,
+                            decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: 'Password'),
+                            controller: passwordTextController),
+                      ),
+                    ],
+                  ),
                 ),
-                controller: passwordController,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-            ),
-
-            SizedBox(
-              height: 30,
-            ),
-            Container(
-              width: 320,
-              child: ElevatedButton(
-                onPressed: () {
-                  var email = emailController.text.toString();
-                  var pwd = passwordController.text.toString();
-                  AuthenticationHelper()
-                      .signIn(email: email, password: pwd)
-                      .then((result) {
-                    if (result == null) {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
-                    } else {
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          result,
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ));
-                    }
-                  });
-                },
-                child: Text("Login"),
-                style: ElevatedButton.styleFrom(
-                  primary: const Color(0xff2b3c5a),
+                const SizedBox(
+                  height: 16,
                 ),
-              ),
+                Container(
+                  height: 40,
+                  width: 300,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 6.0,
+                      primary: Colors.indigoAccent, // background
+                      onPrimary: Colors.white, // foreground
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30.0),
+                          side: const BorderSide(color: Colors.indigoAccent)),
+                    ),
+                    onPressed: () {
+                      context
+                          .read<AuthenticationService>()
+                          .signIn(
+                            email: emailTextController.text.trim(),
+                            password: passwordTextController.text.trim(),
+                          )
+                          .then((value) => () {
+                                ScaffoldMessenger.of(context)
+                                    .showSnackBar(SnackBar(
+                                  content: Text(value.toString()),
+                                  duration: const Duration(milliseconds: 1200),
+                                ));
+                              });
+                    },
+                    child: Text('SignIn'),
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
+                ),
+                InkWell(
+                  onTap: () => Navigator.pushNamed(
+                    context,
+                    '/signup',
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text("Don't have an account? "),
+                      Text(
+                        'Sign up.',
+                        style: TextStyle(
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                )
+              ],
             ),
-            TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => SignUpPage()));
-                },
-                child: Text(
-                  "Don't have account, Create here",
-                  style: TextStyle(color: Colors.white),
-                ))
-          ],
+          ),
         ),
       ),
     );
